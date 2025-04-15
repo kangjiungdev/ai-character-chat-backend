@@ -28,10 +28,12 @@ type User struct {
 }
 
 func CreateUser(db *sql.DB, user *User) error {
-	// 비밀번호 해싱
+	// 비밀번호 해시
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("비밀번호 해싱 실패: %w", err)
+		// 비밀번호 해시 에러
+		fmt.Println("비밀번호 해시 에러", err)
+		return fmt.Errorf("요청을 처리하는 중 문제가 발생했습니다. 나중에 다시 시도해주세요")
 	}
 
 	query := `
@@ -41,6 +43,7 @@ func CreateUser(db *sql.DB, user *User) error {
 
 	_, err = db.Exec(query, user.ID, string(hashedPassword), user.Name, user.PhoneNumber, user.BirthDate)
 	if err != nil {
+		fmt.Println("DB 에러", err)
 		// 중복 ID 에러인지 확인
 		if isDuplicateEntryError(err) {
 			return fmt.Errorf("해당 아이디를 가진 유저가 이미 존재합니다")

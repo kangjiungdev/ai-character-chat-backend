@@ -98,13 +98,11 @@ func SignupHandler(c *gin.Context) {
 	database.InitDB()
 	db := database.GetDB()
 	err = models.CreateUser(db, user)
+	// 현재 문제: 유저를 삭제하고 같은 아이디로 가입하면 에러가 생김. 그런데 삭제한 후 새로고침 누르고 가입하면 에러 안생김.
 	if err != nil {
-		var statusCode int
+		statusCode := http.StatusInternalServerError // 기본 에러 status 코드
 		if err.Error() == "해당 아이디를 가진 유저가 이미 존재합니다" {
-			statusCode = http.StatusConflict
-		}
-		if err.Error() == "요청을 처리하는 중 문제가 발생했습니다. 나중에 다시 시도해주세요" {
-			statusCode = http.StatusInternalServerError
+			statusCode = http.StatusConflict // 유저 중복 에러 status 코드
 		}
 		c.JSON(statusCode, gin.H{
 			"data": models.APIResponse[string]{
