@@ -1,14 +1,12 @@
 package database
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"time"
 
+	"github.com/kangjiungdev/ai-character-chat/backend/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
@@ -20,22 +18,16 @@ func InitDB() {
 	}
 
 	var err error
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
-	})
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("DB 연결 실패: %v", err)
 	}
 
-	sqlDB, err := db.DB()
+	// 마이그레이션 (선택)
+	err = db.AutoMigrate(&models.User{})
 	if err != nil {
-		log.Fatalf("DB 객체 가져오기 실패: %v", err)
+		log.Fatalf("AutoMigrate 실패: %v", err)
 	}
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-
-	fmt.Println("DB 연결 성공")
 }
 
 func GetDB() *gorm.DB {

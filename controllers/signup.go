@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -44,7 +43,6 @@ func SignupHandler(c *gin.Context) {
 		PhoneNumber: req.PhoneNumber,
 		BirthDate:   birthDate,
 	}
-	fmt.Println("user", user)
 	database.InitDB()
 	db := database.GetDB()
 	statusCode, err := models.CreateUser(db, user)
