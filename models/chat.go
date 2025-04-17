@@ -3,7 +3,7 @@ package models
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"time"
 )
 
@@ -13,10 +13,10 @@ func (s StringArray) Value() (driver.Value, error) {
 	return json.Marshal(s)
 }
 
-func (s *StringArray) Scan(value interface{}) error {
+func (s *StringArray) Scan(value any) error {
 	b, ok := value.([]byte)
 	if !ok {
-		return fmt.Errorf("failed to convert value to []byte")
+		return errors.New("failed to convert value to []byte")
 	}
 	return json.Unmarshal(b, s)
 }

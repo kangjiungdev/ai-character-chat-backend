@@ -39,6 +39,7 @@ type UserFormRequest struct {
 
 func (u *UserFormRequest) UserFormValidation() error {
 	inputRegex := regexp.MustCompile(`^[a-zA-Z0-9]+$`)
+
 	if !inputRegex.MatchString(u.ID) {
 		return errors.New("아이디는 영어와 숫자만 입력 가능합니다")
 	}
@@ -101,4 +102,25 @@ func isDuplicateKeyError(err error) bool {
 		return mysqlErr.Number == 1062
 	}
 	return false
+}
+
+func Login(db *gorm.DB, user *User) (int, error) {
+	var dbUser User
+	err := db.Where("id = ?", user.ID).First(dbUser).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return http.StatusUnauthorized, errors.New("아이디 또는 비밀번호가 잘못되었습니다")
+		}
+		return http.StatusInternalServerError, errors.New("요청을 처리하는 중 문제가 발생했습니다. 나중에 다시 시도해주세요")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+	if err != nil {
+		return http.StatusUnauthorized, errors.New("아이디 또는 비밀번호가 잘못되었습니다")
+	}
+
+	user = &dbUser
+
+	return http.StatusOK, nil
+
 }

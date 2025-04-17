@@ -8,11 +8,9 @@ import (
 )
 
 func HomeHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"data": models.APIResponse[string]{
-			Status:  "success",
-			Data:    "home data",
-			Message: "get-characters",
-		},
+	models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{
+		Status:  "success",
+		Data:    "home data",
+		Message: "get-characters",
 	})
 }
