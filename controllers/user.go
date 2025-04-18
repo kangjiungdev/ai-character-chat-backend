@@ -23,17 +23,9 @@ func MeHandler(c *gin.Context) {
 		return
 	}
 
-	type myData struct {
-		ID   string `json:"id"`
-		Name string `json:"name"`
-	}
-	data := myData{
-		ID:   userID.(string),
-		Name: "형님",
-	}
-	models.SendAPIResponse(c, http.StatusOK, models.APIResponse[myData]{
+	models.SendAPIResponse(c, http.StatusOK, models.APIResponse[string]{
 		Status:  "success",
-		Data:    models.Ptr(data),
+		Data:    models.Ptr(userID.(string)),
 		Message: "로그인 됨",
 	})
 }

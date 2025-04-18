@@ -46,5 +46,9 @@ func LoginHandler(c *gin.Context) {
 	session.Set("user_id", user.ID)
 	session.Save()
 
-	models.SendAPIResponse(c, statusCode, models.APIResponse[models.User]{Status: status, Data: models.Ptr(*user), Message: message})
+	models.SendAPIResponse(c, statusCode, models.APIResponse[string]{
+		Status:  status,
+		Data:    models.Ptr(user.ID),
+		Message: message,
+	})
 }
