@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -11,7 +10,6 @@ import (
 )
 
 func CsrfTokenHandler(c *gin.Context) {
-	fmt.Println("CSRF token handler called")
 	if !strings.Contains(c.GetHeader("Accept"), "application/json") {
 		models.SendAPIResponse(c, http.StatusNotFound, models.APIResponse[string]{
 			Status:  "error",

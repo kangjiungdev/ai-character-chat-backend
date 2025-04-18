@@ -18,7 +18,7 @@ func SetupRouter() *gin.Engine {
 
 	frontendUrl := os.Getenv("FRONTEND_URL")
 
-	store := cookie.NewStore([]byte(os.Getenv("SESSION_SECRET")))
+	store := cookie.NewStore([]byte(os.Getenv("SESSION_SECRET_KEY")))
 	r.Use(sessions.Sessions("aichat_sess", store))
 
 	r.Use(cors.New(cors.Config{
@@ -31,7 +31,7 @@ func SetupRouter() *gin.Engine {
 	// 라우트 등록
 	api := r.Group("/api")
 	api.Use(csrf.Middleware(csrf.Options{
-		Secret: "csrf-secret-key", // 랜덤하게 만들어서 환경변수로 관리
+		Secret: os.Getenv("CSRF_SECRET_KEY"),
 		ErrorFunc: func(c *gin.Context) {
 			c.JSON(http.StatusForbidden, gin.H{"error": "CSRF token mismatch"})
 			c.Abort()
@@ -40,13 +40,15 @@ func SetupRouter() *gin.Engine {
 	api.Use(EnforceJSONOnly())
 	{
 		api.GET("/csrf-token", controllers.CsrfTokenHandler)
+		api.GET("/me", controllers.MeHandler)
 		api.POST("/signup", controllers.SignupHandler)
 		api.POST("/login", controllers.LoginHandler)
 	}
 
 	public := r.Group("/api/public")
+	public.Use(EnforceJSONOnly())
 	{
-		public.POST("/get-characters", controllers.GetCharacters)
+		public.GET("/get-characters", controllers.GetCharacters)
 	}
 
 	return r
