@@ -7,10 +7,10 @@ import (
 	"github.com/kangjiungdev/ai-character-chat/backend/models"
 )
 
-func HomeHandler(c *gin.Context) {
-	models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{
+func GetCharacters(c *gin.Context) {
+	models.SendAPIResponse(c, http.StatusOK, models.APIResponse[string]{
 		Status:  "success",
-		Data:    "home data",
+		Data:    models.Ptr("home data"),
 		Message: "get-characters",
 	})
 }

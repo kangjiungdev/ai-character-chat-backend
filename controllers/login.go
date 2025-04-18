@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/kangjiungdev/ai-character-chat/backend/internal/database"
 	"github.com/kangjiungdev/ai-character-chat/backend/models"
@@ -17,7 +19,8 @@ func LoginHandler(c *gin.Context) {
 	req := LoginFormRequest{}
 	err := c.Bind(&req)
 	if err != nil {
-		models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{Status: "error", Data: "", Message: "Form 형식이 올바르지 않습니다"})
+		fmt.Println("Bind error:", err)
+		models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{Status: "error", Data: nil, Message: "입력하신 정보가 올바르지 않습니다"})
 		return
 	}
 	database.InitDB()
@@ -36,7 +39,11 @@ func LoginHandler(c *gin.Context) {
 	if err != nil {
 		status = "error"
 		message = err.Error()
-		models.SendAPIResponse(c, statusCode, models.APIResponse[string]{Status: status, Data: "", Message: message})
+		models.SendAPIResponse(c, statusCode, models.APIResponse[string]{Status: status, Data: nil, Message: message})
 	}
-	models.SendAPIResponse(c, statusCode, models.APIResponse[models.User]{Status: status, Data: *user, Message: message})
+	session := sessions.Default(c)
+	session.Set("current_user", user.ID)
+	session.Save()
+
+	models.SendAPIResponse(c, statusCode, models.APIResponse[models.User]{Status: status, Data: models.Ptr(*user), Message: message})
 }

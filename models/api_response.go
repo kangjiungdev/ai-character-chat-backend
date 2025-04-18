@@ -6,7 +6,7 @@ import (
 
 type APIResponse[T any] struct {
 	Status  string `json:"status"`
-	Data    T      `json:"data"`
+	Data    *T     `json:"data,omitempty"`
 	Message string `json:"message"`
 }
 
@@ -14,4 +14,8 @@ func SendAPIResponse[T any](c *gin.Context, statusCode int, apiResponse APIRespo
 	c.JSON(statusCode, gin.H{
 		"data": apiResponse,
 	})
+}
+
+func Ptr[T any](v T) *T {
+	return &v
 }

@@ -13,13 +13,13 @@ func SignupHandler(c *gin.Context) {
 	req := models.UserFormRequest{}
 	err := c.Bind(&req)
 	if err != nil {
-		models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{Status: "error", Data: "", Message: "Form 형식이 올바르지 않습니다"})
+		models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{Status: "error", Data: nil, Message: "입력하신 정보가 올바르지 않습니다"})
 		return
 	}
 
 	err = req.UserFormValidation()
 	if err != nil {
-		models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{Status: "error", Data: "", Message: err.Error()})
+		models.SendAPIResponse(c, http.StatusBadRequest, models.APIResponse[string]{Status: "error", Data: nil, Message: err.Error()})
 		return
 	}
 
@@ -46,6 +46,6 @@ func SignupHandler(c *gin.Context) {
 		status = "error"
 		message = err.Error()
 	}
-	models.SendAPIResponse(c, statusCode, models.APIResponse[string]{Status: status, Data: "", Message: message})
+	models.SendAPIResponse(c, statusCode, models.APIResponse[string]{Status: status, Data: nil, Message: message})
 
 }

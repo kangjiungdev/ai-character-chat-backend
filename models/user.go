@@ -15,14 +15,14 @@ import (
 )
 
 type User struct {
-	ID          string `gorm:"primaryKey"`
-	Password    string
-	Name        string
-	PhoneNumber string
-	BirthDate   time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	ID          string         `gorm:"column:id;primaryKey"`
+	Password    string         `gorm:"column:password"`
+	Name        string         `gorm:"column:name"`
+	PhoneNumber string         `gorm:"column:phone_number"`
+	BirthDate   time.Time      `gorm:"column:birth_date"`
+	CreatedAt   time.Time      `gorm:"column:created_at"`
+	UpdatedAt   time.Time      `gorm:"column:updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;index"`
 }
 
 func (User) TableName() string {
@@ -105,7 +105,7 @@ func isDuplicateKeyError(err error) bool {
 }
 
 func Login(db *gorm.DB, user *User) (int, error) {
-	var dbUser User
+	dbUser := &User{}
 	err := db.Where("id = ?", user.ID).First(dbUser).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -119,7 +119,7 @@ func Login(db *gorm.DB, user *User) (int, error) {
 		return http.StatusUnauthorized, errors.New("아이디 또는 비밀번호가 잘못되었습니다")
 	}
 
-	user = &dbUser
+	user = dbUser
 
 	return http.StatusOK, nil
 
