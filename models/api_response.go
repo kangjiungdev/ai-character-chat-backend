@@ -11,9 +11,7 @@ type APIResponse[T any] struct {
 }
 
 func SendAPIResponse[T any](c *gin.Context, statusCode int, apiResponse APIResponse[T]) {
-	c.JSON(statusCode, gin.H{
-		"data": apiResponse,
-	})
+	c.JSON(statusCode, apiResponse)
 }
 
 func Ptr[T any](v T) *T {

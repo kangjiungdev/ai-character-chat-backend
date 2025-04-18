@@ -40,6 +40,7 @@ func LoginHandler(c *gin.Context) {
 		status = "error"
 		message = err.Error()
 		models.SendAPIResponse(c, statusCode, models.APIResponse[string]{Status: status, Data: nil, Message: message})
+		return
 	}
 	session := sessions.Default(c)
 	session.Set("current_user", user.ID)

@@ -41,14 +41,14 @@ func (u *UserFormRequest) UserFormValidation() error {
 	inputRegex := regexp.MustCompile(`^[a-zA-Z0-9]+$`)
 
 	if !inputRegex.MatchString(u.ID) {
-		return errors.New("아이디는 영어와 숫자만 입력 가능합니다")
+		return errors.New("아이디는 영문자와 숫자만 입력 가능합니다")
 	}
 	if utf8.RuneCountInString(u.ID) < 6 || utf8.RuneCountInString(u.ID) > 15 {
 		return errors.New("아이디는 6자~15자여야 합니다")
 	}
 
 	if !inputRegex.MatchString(u.Password) {
-		return errors.New("비밀번호는 영어와 숫자만 입력 가능합니다")
+		return errors.New("비밀번호는 영문자와 숫자만 입력 가능합니다")
 	}
 	if utf8.RuneCountInString(u.Password) < 8 || utf8.RuneCountInString(u.Password) > 20 {
 		return errors.New("비밀번호는 8자~20자여야 합니다")
